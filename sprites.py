@@ -126,7 +126,7 @@ class MineCount:
 
 class Timer:
     def __init__(self):
-        self.timer_surface = pygame.Surface((140, 40))
+        self.timer_surface = pygame.Surface((120, 40))
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
         self.start_ticks = 0
         self.frozen_ms = None
@@ -156,6 +156,6 @@ class Timer:
 
         timer_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
 
-        screen.blit(self.timer_surface, (160, 20))
+        screen.blit(self.timer_surface, (180, 20))
         text = self.font.render(timer_text, True, WHITE)
-        screen.blit(text, (170, 22))
+        screen.blit(text, (190, 22))

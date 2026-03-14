@@ -81,6 +81,11 @@ class Game:
                     self.timer.stop()
                         
             elif event.button == 3:
+                if not self.first_click_done:
+                    self.board.generate_after_first_click(mx, my)
+                    self.timer.start()
+                    self.first_click_done = True
+
                 if not tile.revealed:
                     tile.flagged = not tile.flagged
             
