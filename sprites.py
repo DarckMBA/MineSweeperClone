@@ -115,18 +115,18 @@ class Board:
 
 class MineCount:
     def __init__(self):
-        self.mineCount_surface = pygame.Surface((100, 40))
+        self.rect = pygame.Rect(40, 20, 100, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_mineCount(self, screen, count):
-        screen.blit(self.mineCount_surface, (40, 20))
+        pygame.draw.rect(screen, BLACK, self.rect)
         screen.blit(tile_mine, (45, 24))
         text = self.font.render(f"= {count}", True, WHITE)
         screen.blit(text, (85, 22))
 
 class Timer:
     def __init__(self):
-        self.timer_surface = pygame.Surface((120, 40))
+        self.rect = pygame.Rect(180, 20, 120, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
         self.start_ticks = 0
         self.frozen_ms = None
@@ -156,20 +156,19 @@ class Timer:
 
         timer_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
 
-        screen.blit(self.timer_surface, (180, 20))
+        pygame.draw.rect(screen, BLACK, self.rect)
         text = self.font.render(timer_text, True, WHITE)
         screen.blit(text, (190, 22))
 
 class ResetButton:
     def __init__(self):
-        self.resetButton_surface = pygame.Surface((80, 40))
+        self.rect = pygame.Rect(340, 20, 80, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_resetButton(self, screen):
-        screen.blit(self.resetButton_surface, (340, 20))
+        pygame.draw.rect(screen, BLACK, self.rect)
         text = self.font.render(f"Reset", True, WHITE)
         screen.blit(text, (345, 22))
 
-    @staticmethod
-    def is_inside_resetButton(x, y):
-        return 340 <= x < 420 and 20 <= y < 60
+    def is_inside_resetButton(self, x, y):
+        return self.rect.collidepoint(x, y)
