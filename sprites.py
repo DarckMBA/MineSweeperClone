@@ -123,3 +123,39 @@ class MineCount:
         screen.blit(tile_mine, (45, 24))
         text = self.font.render(f"= {count}", True, WHITE)
         screen.blit(text, (85, 22))
+
+class Timer:
+    def __init__(self):
+        self.timer_surface = pygame.Surface((140, 40))
+        self.font = pygame.font.SysFont("Arial", 30, bold = True)
+        self.start_ticks = 0
+        self.frozen_ms = None
+        self.started = False
+
+    def start(self):
+        self.start_ticks = pygame.time.get_ticks()
+        self.frozen_ms = None
+        self.started = True
+    
+    def stop(self):
+        if self.frozen_ms is None:
+            self.frozen_ms = pygame.time.get_ticks() - self.start_ticks
+
+    def get_elapsed_ms(self):
+        if not self.started:
+            return 0
+        if self.frozen_ms is not None:
+            return self.frozen_ms
+        return pygame.time.get_ticks() - self.start_ticks
+
+    def display_timer(self, screen):
+        elapsed_ms = self.get_elapsed_ms()
+        milliseconds = (elapsed_ms % 1000) // 10
+        seconds = (elapsed_ms // 1000) % 60
+        minutes = elapsed_ms // 60000
+
+        timer_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
+
+        screen.blit(self.timer_surface, (160, 20))
+        text = self.font.render(timer_text, True, WHITE)
+        screen.blit(text, (170, 22))

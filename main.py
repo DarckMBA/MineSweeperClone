@@ -12,6 +12,7 @@ class Game:
     def new(self):
         self.board = Board()
         self.mineCount = MineCount()
+        self.timer = Timer()
         self.first_click_done = False
 
     def run(self):
@@ -27,6 +28,7 @@ class Game:
         self.screen.fill(BGCOLOUR)
         flags_paced = sum(title.flagged for col in self.board.board_list for title in col)
         self.mineCount.display_mineCount(self.screen, AMOUNT_MINES - flags_paced)
+        self.timer.display_timer(self.screen)
         self.board.draw(self.screen)
         pygame.display.flip()
 
@@ -63,18 +65,20 @@ class Game:
 
                 if not self.first_click_done:
                     self.board.generate_after_first_click(mx, my)
+                    self.timer.start()
                     self.first_click_done = True
 
                 if not self.board.dig(mx, my):
                     for row in self.board.board_list:
                         for t in row:
-                            if t.flagged and tile.type != "m":
+                            if t.flagged and t.type != "m":
                                 t.flagged = False
                                 t.revealed = True
                                 t.image = tile_not_mine
                             elif t.type == "m":
                                 t.revealed = True
                     self.playing = False
+                    self.timer.stop()
                         
             elif event.button == 3:
                 if not tile.revealed:
@@ -83,6 +87,7 @@ class Game:
             if self.check_win():
                 self.win = True
                 self.playing = False
+                self.timer.stop()
                 for row in self.board.board_list:
                     for t in row:
                         if not t.revealed:
