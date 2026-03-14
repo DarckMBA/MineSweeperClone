@@ -14,6 +14,7 @@ class Game:
         self.mineCount = MineCount()
         self.timer = Timer()
         self.first_click_done = False
+        self.resetButton = ResetButton()
 
     def run(self):
         self.playing = True
@@ -29,6 +30,7 @@ class Game:
         flags_paced = sum(title.flagged for col in self.board.board_list for title in col)
         self.mineCount.display_mineCount(self.screen, AMOUNT_MINES - flags_paced)
         self.timer.display_timer(self.screen)
+        self.resetButton.display_resetButton(self.screen)
         self.board.draw(self.screen)
         pygame.display.flip()
 
@@ -48,13 +50,19 @@ class Game:
                 continue
 
             mx, my = pygame.mouse.get_pos()
+
+            if (event.button == 1 or event.button == 3) and self.resetButton.is_inside_resetButton(mx, my):
+                self.new()
+                return
+
             if my < TOPSECTION:
                 continue
+                
             my -= TOPSECTION
             mx //= TILESIZE
             my //= TILESIZE
 
-            if not self.board.is_inside(mx, my):
+            if not self.board.is_inside_board(mx, my):
                 continue
 
             tile = self.board.board_list[mx][my]
@@ -85,7 +93,7 @@ class Game:
                     self.board.generate_after_first_click(mx, my)
                     self.timer.start()
                     self.first_click_done = True
-
+                    
                 if not tile.revealed:
                     tile.flagged = not tile.flagged
             

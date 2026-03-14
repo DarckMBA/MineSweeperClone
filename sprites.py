@@ -39,7 +39,7 @@ class Board:
         for dx in (-1, 0, 1):
             for dy in (-1, 0, 1):
                 nx, ny = safe_x + dx, safe_y + dy
-                if self.is_inside(nx, ny):
+                if self.is_inside_board(nx, ny):
                     safe_cells.add((nx, ny))
 
         placed = 0
@@ -63,7 +63,7 @@ class Board:
                         self.board_list[x][y].type = "c"
 
     @staticmethod
-    def is_inside(x,y):
+    def is_inside_board(x,y):
         return 0 <= x < COLS and 0 <= y < ROWS
     
     def check_neighbours(self, x, y):
@@ -72,7 +72,7 @@ class Board:
             for y_offset in range(-1, 2):
                 neighbour_x = x + x_offset
                 neighbour_y = y + y_offset
-                if self.is_inside(neighbour_x, neighbour_y) and self.board_list[neighbour_x][neighbour_y].type == "m":
+                if self.is_inside_board(neighbour_x, neighbour_y) and self.board_list[neighbour_x][neighbour_y].type == "m":
                     total_mines += 1
 
         return total_mines
@@ -159,3 +159,17 @@ class Timer:
         screen.blit(self.timer_surface, (180, 20))
         text = self.font.render(timer_text, True, WHITE)
         screen.blit(text, (190, 22))
+
+class ResetButton:
+    def __init__(self):
+        self.resetButton_surface = pygame.Surface((80, 40))
+        self.font = pygame.font.SysFont("Arial", 30, bold = True)
+
+    def display_resetButton(self, screen):
+        screen.blit(self.resetButton_surface, (340, 20))
+        text = self.font.render(f"Reset", True, WHITE)
+        screen.blit(text, (345, 22))
+
+    @staticmethod
+    def is_inside_resetButton(x, y):
+        return 340 <= x < 420 and 20 <= y < 60
