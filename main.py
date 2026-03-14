@@ -5,12 +5,13 @@ from sprites import *
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT + TOPSECTION))
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
 
     def new(self):
         self.board = Board()
+        self.mineCount = MineCount()
         self.first_click_done = False
 
     def run(self):
@@ -24,6 +25,8 @@ class Game:
 
     def draw(self):
         self.screen.fill(BGCOLOUR)
+        flags_paced = sum(title.flagged for col in self.board.board_list for title in col)
+        self.mineCount.display_mineCount(self.screen, AMOUNT_MINES - flags_paced)
         self.board.draw(self.screen)
         pygame.display.flip()
 
@@ -43,6 +46,9 @@ class Game:
                 continue
 
             mx, my = pygame.mouse.get_pos()
+            if my < TOPSECTION:
+                continue
+            my -= TOPSECTION
             mx //= TILESIZE
             my //= TILESIZE
 

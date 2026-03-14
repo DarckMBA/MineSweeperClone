@@ -89,7 +89,7 @@ class Board:
             for tile in row:
                 tile.draw(self.board_surface)
         
-        screen.blit(self.board_surface, (0, 0))
+        screen.blit(self.board_surface, (0, TOPSECTION))
 
     def dig(self, x, y):
         self.dug.append((x, y))
@@ -112,3 +112,14 @@ class Board:
     def dislplay_board(self):
         for row in self.board_list:
             print(row)
+
+class MineCount:
+    def __init__(self):
+        self.mineCount_surface = pygame.Surface((100, 40))
+        self.font = pygame.font.SysFont("Arial", 30, bold = True)
+
+    def display_mineCount(self, screen, count):
+        screen.blit(self.mineCount_surface, (40, 20))
+        screen.blit(tile_mine, (45, 24))
+        text = self.font.render(f"= {count}", True, WHITE)
+        screen.blit(text, (85, 22))
