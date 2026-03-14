@@ -31,20 +31,27 @@ class Board:
     def __init__(self):
         self.board_surface = pygame.Surface((WIDTH, HEIGHT))
         self.board_list = [[Tile(col, row, tile_empty, "u") for row in range(ROWS)] for col in range(COLS)]
-        self.place_mines()
-        self.place_clues()
         self.dug = []
+        self.mines_placed = False
 
-    def place_mines(self):
-        for _ in range(AMOUNT_MINES):
-            while True:
-                x = random.randint(0, COLS - 1)
-                y = random.randint(0, ROWS - 1)
+    def place_mines(self, safe_x, safe_y):
+        safe_cells = {(safe_x, safe_y)}
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                nx, ny = safe_x + dx, safe_y + dy
+                if self.is_inside(nx, ny):
+                    safe_cells.add((nx, ny))
 
-                if self.board_list[x][y].type == "u":
-                    self.board_list[x][y].image = tile_mine
-                    self.board_list[x][y].type = "m"
-                    break
+        placed = 0
+        while placed < AMOUNT_MINES:
+            x = random.randint(0, COLS - 1)
+            y = random.randint(0, ROWS - 1)
+            if (x, y) in safe_cells:
+                continue
+            if self.board_list[x][y].type == "u":
+                self.board_list[x][y].image = tile_mine
+                self.board_list[x][y].type = "m"
+                placed += 1
     
     def place_clues(self):
         for x in range(COLS):
@@ -69,6 +76,13 @@ class Board:
                     total_mines += 1
 
         return total_mines
+    
+    def generate_after_first_click(self, first_x, first_y):
+        if self.mines_placed:
+            return
+        self.place_mines(first_x, first_y)
+        self.place_clues()
+        self.mines_placed = True
     
     def draw(self, screen):
         for row in self.board_list:

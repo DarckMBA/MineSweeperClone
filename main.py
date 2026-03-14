@@ -11,7 +11,7 @@ class Game:
 
     def new(self):
         self.board = Board()
-        self.board.dislplay_board()
+        self.first_click_done = False
 
     def run(self):
         self.playing = True
@@ -39,34 +39,48 @@ class Game:
             if event.type == pygame.QUIT:
                 quit(0)
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = pygame.mouse.get_pos()
-                mx //= TILESIZE
-                my //= TILESIZE
+            if event.type != pygame.MOUSEBUTTONDOWN:
+                continue
 
-                if event.button == 1:
-                    if not self.board.board_list[mx][my].flagged:
-                        if not self.board.dig(mx, my):
-                            for row in self.board.board_list:
-                                for tile in row:
-                                    if tile.flagged and tile.type != "m":
-                                        tile.flagged = False
-                                        tile.revealed = True
-                                        tile.image = tile_not_mine
-                                    elif tile.type == "m":
-                                        tile.revealed = True
-                            self.playing = False
-                if event.button == 3:
-                    if not self.board.board_list[mx][my].revealed:
-                        self.board.board_list[mx][my].flagged = not self.board.board_list[mx][my].flagged
+            mx, my = pygame.mouse.get_pos()
+            mx //= TILESIZE
+            my //= TILESIZE
+
+            if not self.board.is_inside(mx, my):
+                continue
+
+            tile = self.board.board_list[mx][my]
+
+            if event.button == 1:
+                if tile.flagged or tile.revealed:
+                    continue
+
+                if not self.first_click_done:
+                    self.board.generate_after_first_click(mx, my)
+                    self.first_click_done = True
+
+                if not self.board.dig(mx, my):
+                    for row in self.board.board_list:
+                        for t in row:
+                            if t.flagged and tile.type != "m":
+                                t.flagged = False
+                                t.revealed = True
+                                t.image = tile_not_mine
+                            elif t.type == "m":
+                                t.revealed = True
+                    self.playing = False
+                        
+            elif event.button == 3:
+                if not tile.revealed:
+                    tile.flagged = not tile.flagged
             
             if self.check_win():
                 self.win = True
                 self.playing = False
                 for row in self.board.board_list:
-                    for tile in row:
-                        if not tile.revealed:
-                            tile.flagged = True
+                    for t in row:
+                        if not t.revealed:
+                            t.flagged = True
     
     def end_screen(self):
         while True:
