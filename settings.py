@@ -12,25 +12,10 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 BGCOLOUR = LIGHTGREY
 
-# Easy settings
-#ROWS = 9
-#COLS = 9
-#AMOUNT_MINES = 10
-
-# Medium settings
-#ROWS = 16
-#COLS = 16
-#AMOUNT_MINES = 40
-
-# Hard settings
-ROWS = 16
-COLS = 30
-AMOUNT_MINES = 99
-
 # General game settings
+MAINMENUHEIGHT = 300
+MAINMENUWIDTH = 300
 TILESIZE = 32
-WIDTH = TILESIZE * COLS
-HEIGHT = TILESIZE * ROWS
 TOPSECTION = 80
 FPS = 60
 TITLE = "Minesweeper Clone"
