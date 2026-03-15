@@ -86,30 +86,39 @@ class App:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                raise SystemExit
 
-            if event.type != pygame.MOUSEBUTTONDOWN:
+            action = self.get_input_action(event)
+            if action is None:
                 continue
+
+            if action in ("reset", "back"):
+                continue
+
+            if action == "quit":
+                pygame.quit()
+                raise SystemExit
 
             mx, my = pygame.mouse.get_pos()
 
-            if (event.button == 1 or event.button == 3) and self.easyButton.is_inside_easyButton(mx, my):
+            if action in ("left", "right") and self.easyButton.is_inside_easyButton(mx, my):
                 self.new_game("easy")
                 self.run_game()
                 return
-            
-            if (event.button == 1 or event.button == 3) and self.mediumButton.is_inside_mediumButton(mx, my):
+
+            if action in ("left", "right") and self.mediumButton.is_inside_mediumButton(mx, my):
                 self.new_game("medium")
                 self.run_game()
                 return
-            
-            if (event.button == 1 or event.button == 3) and self.hardButton.is_inside_hardButton(mx, my):
+
+            if action in ("left", "right") and self.hardButton.is_inside_hardButton(mx, my):
                 self.new_game("hard")
                 self.run_game()
                 return
 
-            if (event.button == 1 or event.button == 3) and self.quitButton.is_inside_quitButton(mx, my):
+            if action in ("left", "right") and self.quitButton.is_inside_quitButton(mx, my):
                 pygame.quit()
-                return
+                raise SystemExit
 
 
     def new_game(self, mode_name):
@@ -163,29 +172,44 @@ class App:
                 if tile.type != "m" and not tile.revealed:
                     return False
         return True
-    
+
     def game_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                raise SystemExit
 
-            if event.type != pygame.MOUSEBUTTONDOWN:
+            action = self.get_input_action(event)
+            if action is None:
                 continue
 
-            mx, my = pygame.mouse.get_pos()
-
-            if (event.button == 1 or event.button == 3) and self.resetButton.is_inside_resetButton(mx, my):
+            if action == "reset":
                 self.new_game(self.current_mode)
                 return
-            
-            if (event.button == 1 or event.button == 3) and self.backButton.is_inside_backButton(mx, my):
+
+            if action == "back":
                 self.back_to_menu = True
                 self.playing = False
                 return
-            
-            if (event.button == 1 or event.button == 3) and self.quitButton.is_inside_quitButton(mx, my):
+
+            if action == "quit":
                 pygame.quit()
+                raise SystemExit
+
+            mx, my = pygame.mouse.get_pos()
+
+            if action in ("left", "right") and self.resetButton.is_inside_resetButton(mx, my):
+                self.new_game(self.current_mode)
                 return
+
+            if action in ("left", "right") and self.backButton.is_inside_backButton(mx, my):
+                self.back_to_menu = True
+                self.playing = False
+                return
+
+            if action in ("left", "right") and self.quitButton.is_inside_quitButton(mx, my):
+                pygame.quit()
+                raise SystemExit
 
             if my < TOPSECTION:
                 continue
@@ -199,7 +223,7 @@ class App:
 
             tile = self.board.board_list[mx][my]
 
-            if event.button == 1:
+            if action == "left":
                 if tile.flagged or tile.revealed:
                     continue
 
@@ -220,7 +244,7 @@ class App:
                     self.playing = False
                     self.timer.stop()
                         
-            elif event.button == 3:
+            elif action == "right":
                 if not self.first_click_done:
                     self.board.generate_after_first_click(mx, my)
                     self.timer.start()
@@ -244,10 +268,39 @@ class App:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    quit(0)
+                    raise SystemExit
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                action = self.get_input_action(event)
+                if action is None:
+                    continue
+
+                if action in ("left", "right", "reset"):
                     return
+
+                if action == "back":
+                    self.back_to_menu = True
+                    return
+
+                if action == "quit":
+                    pygame.quit()
+                    raise SystemExit
+                
+    def get_input_action(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            return "left"
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+            return "right"
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
+            return "left"
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+            return "right"
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+            return "reset"
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_w:
+            return "back"
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+            return "quit"
+        return None
 
 
 app = App()
