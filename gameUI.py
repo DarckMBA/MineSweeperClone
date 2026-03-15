@@ -8,54 +8,6 @@ from settings import *
 # "c" = clue
 # "e" = empty
 
-
-class MainMenu:
-    def __init__(self):
-        self.mainMenu_surface = pygame.Surface((MAINMENUWIDTH, MAINMENUHEIGHT))
-
-    def display_mainMenu(self, screen):
-        screen.blit(self.mainMenu_surface, (0, 0))
-
-class EasyButton:
-    def __init__(self):
-        self.rect = pygame.Rect(100, 40, 100, 40)
-        self.font = pygame.font.SysFont("Arial", 30, bold = True)
-
-    def display_easyButton(self, screen):
-        pygame.draw.rect(screen, BLACK, self.rect)
-        text = self.font.render(f"Easy", True, WHITE)
-        screen.blit(text, (105, 42))
-
-    def is_inside_easyButton(self, x, y):
-        return self.rect.collidepoint(x, y)
-    
-class MediumButton:
-    def __init__(self):
-        self.rect = pygame.Rect(100, 100, 100, 40)
-        self.font = pygame.font.SysFont("Arial", 30, bold = True)
-
-    def display_mediumButton(self, screen):
-        pygame.draw.rect(screen, BLACK, self.rect)
-        text = self.font.render(f"Medium", True, WHITE)
-        screen.blit(text, (105, 102))
-
-    def is_inside_mediumButton(self, x, y):
-        return self.rect.collidepoint(x, y)
-    
-class HardButton:
-    def __init__(self):
-        self.rect = pygame.Rect(100, 160, 100, 40)
-        self.font = pygame.font.SysFont("Arial", 30, bold = True)
-
-    def display_hardButton(self, screen):
-        pygame.draw.rect(screen, BLACK, self.rect)
-        text = self.font.render(f"Hard", True, WHITE)
-        screen.blit(text, (105, 162))
-
-    def is_inside_hardButton(self, x, y):
-        return self.rect.collidepoint(x, y)
-
-
 class Tile:
     def __init__(self, x, y, image, type, revealed = False, flagged = False):
         self.x, self.y = x * TILESIZE, y * TILESIZE
@@ -163,19 +115,20 @@ class Board:
         screen.blit(self.board_surface, (0, TOPSECTION))
 
 class MineCount:
-    def __init__(self):
-        self.rect = pygame.Rect(40, 20, 100, 40)
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 100, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_mineCount(self, screen, count):
         pygame.draw.rect(screen, BLACK, self.rect)
-        screen.blit(tile_mine, (45, 24))
+        mine_icon_pos = (self.rect.x + 5, self.rect.y + (self.rect.height - TILESIZE) // 2)
+        screen.blit(tile_mine, mine_icon_pos)
         text = self.font.render(f"= {count}", True, WHITE)
-        screen.blit(text, (85, 22))
+        screen.blit(text, (self.rect.x + 40, self.rect.y + 2))
 
 class Timer:
-    def __init__(self):
-        self.rect = pygame.Rect(180, 20, 120, 40)
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 120, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
         self.start_ticks = 0
         self.frozen_ms = None
@@ -207,43 +160,47 @@ class Timer:
 
         pygame.draw.rect(screen, BLACK, self.rect)
         text = self.font.render(timer_text, True, WHITE)
-        screen.blit(text, (190, 22))
+        text_rect = text.get_rect(center = self.rect.center)
+        screen.blit(text, text_rect)
 
 class ResetButton:
-    def __init__(self):
-        self.rect = pygame.Rect(340, 20, 80, 40)
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 80, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_resetButton(self, screen):
         pygame.draw.rect(screen, BLACK, self.rect)
         text = self.font.render(f"Reset", True, WHITE)
-        screen.blit(text, (345, 22))
+        text_rect = text.get_rect(center = self.rect.center)
+        screen.blit(text, text_rect)
 
     def is_inside_resetButton(self, x, y):
         return self.rect.collidepoint(x, y)
     
 class BackButton:
-    def __init__(self):
-        self.rect = pygame.Rect(460, 20, 70, 40)
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 70, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_backButton(self, screen):
         pygame.draw.rect(screen, BLACK, self.rect)
         text = self.font.render(f"Back", True, WHITE)
-        screen.blit(text, (465, 22))
+        text_rect = text.get_rect(center = self.rect.center)
+        screen.blit(text, text_rect)
 
     def is_inside_backButton(self, x, y):
         return self.rect.collidepoint(x, y)
     
 class QuitButton:
-    def __init__(self):
-        self.rect = pygame.Rect(570, 20, 70, 40)
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 70, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_quitButton(self, screen):
         pygame.draw.rect(screen, BLACK, self.rect)
         text = self.font.render(f"Quit", True, WHITE)
-        screen.blit(text, (575, 22))
+        text_rect = text.get_rect(center = self.rect.center)
+        screen.blit(text, text_rect)
 
     def is_inside_quitButton(self, x, y):
         return self.rect.collidepoint(x, y)

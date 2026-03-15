@@ -2,7 +2,8 @@ import os
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 import pygame
 from settings import *
-from sprites import *
+from gameUI import *
+from gameViews import mainMenuView
 
 class App:
     def __init__(self):
@@ -10,22 +11,59 @@ class App:
         self.clock = pygame.time.Clock()
 
         self.modes = {
-            "easy": (9, 9, 10),
-            "medium": (16, 16, 40),
-            "hard": (16, 30, 99),
+            "easy": {
+                "rows": 9,
+                "cols": 9,
+                "mines": 10,
+                "ui": {
+                    "minecount": (20, 0),
+                    "timer": (150, 0),
+                    "reset": (25, 40),
+                    "back": (115, 40),
+                    "quit": (195, 40),
+                },
+            },
+            "medium": {
+                "rows": 16,
+                "cols": 16,
+                "mines": 40,
+                "ui": {
+                    "minecount": (15, 20),
+                    "timer": (125, 20),
+                    "reset": (255, 20),
+                    "back": (345, 20),
+                    "quit": (425, 20),
+                },
+            },
+            "hard": {
+                "rows": 16,
+                "cols": 30,
+                "mines": 99,
+                "ui": {
+                    "minecount": (40, 20),
+                    "timer": (180, 20),
+                    "reset": (340, 20),
+                    "back": (460, 20),
+                    "quit": (570, 20),
+                },
+            },
         }
 
-        self.rows, self.cols, self.amountMines = self.modes["easy"]
+        self.current_mode = "easy"
+        self.rows = self.modes[self.current_mode]["rows"]
+        self.cols = self.modes[self.current_mode]["cols"]
+        self.amountMines = self.modes[self.current_mode]["mines"]
         self.screen = pygame.display.set_mode((MAINMENUWIDTH, MAINMENUHEIGHT))
         pygame.display.set_caption(TITLE)
 
 
     def new_main_menu(self):
         self.screen = pygame.display.set_mode((MAINMENUWIDTH, MAINMENUHEIGHT))
-        self.mainMenu = MainMenu()
-        self.easyButton = EasyButton()
-        self.mediumButton = MediumButton()
-        self.hardButton = HardButton()
+        self.mainMenu = mainMenuView.MainMenu()
+        self.easyButton = mainMenuView.EasyButton()
+        self.mediumButton = mainMenuView.MediumButton()
+        self.hardButton = mainMenuView.HardButton()
+        self.quitButton = mainMenuView.QuitButton()
 
     def run_app(self):
         self.open = True
@@ -41,6 +79,7 @@ class App:
         self.easyButton.display_easyButton(self.screen)
         self.mediumButton.display_mediumButton(self.screen)
         self.hardButton.display_hardButton(self.screen)
+        self.quitButton.display_quitButton(self.screen)
         pygame.display.flip()
 
     def main_menu_events(self):
@@ -53,35 +92,44 @@ class App:
 
             mx, my = pygame.mouse.get_pos()
 
-            if event.button == 1 and self.easyButton.is_inside_easyButton(mx, my):
-                self.new_game(*self.modes["easy"])
+            if (event.button == 1 or event.button == 3) and self.easyButton.is_inside_easyButton(mx, my):
+                self.new_game("easy")
                 self.run_game()
                 return
             
-            if event.button == 1 and self.mediumButton.is_inside_mediumButton(mx, my):
-                self.new_game(*self.modes["medium"])
+            if (event.button == 1 or event.button == 3) and self.mediumButton.is_inside_mediumButton(mx, my):
+                self.new_game("medium")
                 self.run_game()
                 return
             
-            if event.button == 1 and self.hardButton.is_inside_hardButton(mx, my):
-                self.new_game(*self.modes["hard"])
+            if (event.button == 1 or event.button == 3) and self.hardButton.is_inside_hardButton(mx, my):
+                self.new_game("hard")
                 self.run_game()
                 return
 
+            if (event.button == 1 or event.button == 3) and self.quitButton.is_inside_quitButton(mx, my):
+                pygame.quit()
+                return
 
-    def new_game(self, rows, cols, amount_mines):
-        self.rows, self.cols, self.amountMines = rows, cols, amount_mines
+
+    def new_game(self, mode_name):
+        self.current_mode = mode_name
+        mode_settings = self.modes[mode_name]
+        self.rows = mode_settings["rows"]
+        self.cols = mode_settings["cols"]
+        self.amountMines = mode_settings["mines"]
         game_width = self.cols * TILESIZE
         game_height = self.rows * TILESIZE
         self.screen = pygame.display.set_mode((game_width, game_height + TOPSECTION))
 
         self.board = Board(self.rows, self.cols, self.amountMines)
-        self.mineCount = MineCount()
-        self.timer = Timer()
+        ui = mode_settings["ui"]
+        self.mineCount = MineCount(*ui["minecount"])
+        self.timer = Timer(*ui["timer"])
         self.first_click_done = False
-        self.resetButton = ResetButton()
-        self.backButton = BackButton()
-        self.quitButton = QuitButton()
+        self.resetButton = ResetButton(*ui["reset"])
+        self.backButton = BackButton(*ui["back"])
+        self.quitButton = QuitButton(*ui["quit"])
 
     def run_game(self):
         while True:
@@ -96,7 +144,7 @@ class App:
                 break
 
             self.close_app()
-            self.new_game(self.rows, self.cols, self.amountMines)
+            self.new_game(self.current_mode)
 
     def draw_game(self):
         self.screen.fill(BGCOLOUR)
@@ -127,7 +175,7 @@ class App:
             mx, my = pygame.mouse.get_pos()
 
             if (event.button == 1 or event.button == 3) and self.resetButton.is_inside_resetButton(mx, my):
-                self.new_game(self.rows, self.cols, self.amountMines)
+                self.new_game(self.current_mode)
                 return
             
             if (event.button == 1 or event.button == 3) and self.backButton.is_inside_backButton(mx, my):
