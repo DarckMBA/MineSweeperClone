@@ -4,6 +4,7 @@ import pygame
 from settings import *
 from gameUI import *
 from gameViews import mainMenuView
+from gameViews import settingsMenuView
 
 class App:
     def __init__(self):
@@ -63,6 +64,7 @@ class App:
         self.easyButton = mainMenuView.EasyButton()
         self.mediumButton = mainMenuView.MediumButton()
         self.hardButton = mainMenuView.HardButton()
+        self.settingsButton = mainMenuView.SettingsButton()
         self.quitButton = mainMenuView.QuitButton()
 
     def run_app(self):
@@ -79,6 +81,7 @@ class App:
         self.easyButton.display_easyButton(self.screen)
         self.mediumButton.display_mediumButton(self.screen)
         self.hardButton.display_hardButton(self.screen)
+        self.settingsButton.display_settingsButton(self.screen)
         self.quitButton.display_quitButton(self.screen)
         pygame.display.flip()
 
@@ -94,6 +97,10 @@ class App:
 
             if action in ("reset", "back"):
                 continue
+
+            if action == "settings":
+                self.new_settings_menu()
+                self.run_settings_menu()
 
             if action == "quit":
                 pygame.quit()
@@ -115,6 +122,10 @@ class App:
                 self.new_game("hard")
                 self.run_game()
                 return
+            
+            if action in ("left", "right") and self.settingsButton.is_inside_settingsButton(mx, my):
+                self.new_settings_menu()
+                self.run_settings_menu()
 
             if action in ("left", "right") and self.quitButton.is_inside_quitButton(mx, my):
                 pygame.quit()
@@ -261,7 +272,70 @@ class App:
                     for t in row:
                         if not t.revealed:
                             t.flagged = True
+
+
+    def new_settings_menu(self):
+        self.screen = pygame.display.set_mode((SETTINGSMENUWIDTH, SETTINGSMENUHEIGHT))
+        self.settingsMenu = settingsMenuView.SettingsMenu()
+        self.controlsExplanation = settingsMenuView.ControlsExplanation()
+        self.backButton = settingsMenuView.BackButton()
+        self.quitButton = settingsMenuView.QuitButton()
     
+    def run_settings_menu(self):
+        while True:
+            self.isInSettingsMenu = True
+            self.back_to_menu = False
+            while self.isInSettingsMenu:
+                self.clock.tick(FPS)
+                self.settings_menu_events()
+                self.draw_settings_menu()
+            if self.back_to_menu:
+                self.new_main_menu()
+                break
+
+            self.close_app()
+            self.new_settings_menu()
+
+    def draw_settings_menu(self):
+        self.screen.fill(BGCOLOUR)
+        self.controlsExplanation.display_controllsExplanation(self.screen)
+        self.backButton.display_backButton(self.screen)
+        self.quitButton.display_quitButton(self.screen)
+        pygame.display.flip()
+
+    def settings_menu_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                raise SystemExit
+
+            action = self.get_input_action(event)
+            if action is None:
+                continue
+
+            if action == "reset":
+                continue
+
+            if action == "back":
+                self.back_to_menu = True
+                self.isInSettingsMenu = False
+                return
+
+            if action == "quit":
+                pygame.quit()
+                raise SystemExit
+
+            mx, my = pygame.mouse.get_pos()
+
+            if action in ("left", "right") and self.backButton.is_inside_backButton(mx, my):
+                self.back_to_menu = True
+                self.isInSettingsMenu = False
+                return
+
+            if action in ("left", "right") and self.quitButton.is_inside_quitButton(mx, my):
+                pygame.quit()
+                raise SystemExit
+
 
     def close_app(self):
         while True:
@@ -300,6 +374,8 @@ class App:
             return "back"
         if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
             return "quit"
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+            return "settings"
         return None
 
 

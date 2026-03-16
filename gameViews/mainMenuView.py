@@ -10,7 +10,7 @@ class MainMenu:
 
 class EasyButton:
     def __init__(self):
-        self.rect = pygame.Rect(100, 40, 100, 40)
+        self.rect = pygame.Rect(40, 60, 100, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_easyButton(self, screen):
@@ -24,7 +24,7 @@ class EasyButton:
     
 class MediumButton:
     def __init__(self):
-        self.rect = pygame.Rect(100, 100, 100, 40)
+        self.rect = pygame.Rect(160, 60, 100, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_mediumButton(self, screen):
@@ -38,7 +38,7 @@ class MediumButton:
     
 class HardButton:
     def __init__(self):
-        self.rect = pygame.Rect(100, 160, 100, 40)
+        self.rect = pygame.Rect(100, 120, 100, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_hardButton(self, screen):
@@ -50,9 +50,23 @@ class HardButton:
     def is_inside_hardButton(self, x, y):
         return self.rect.collidepoint(x, y)
     
+class SettingsButton:
+    def __init__(self):
+        self.rect = pygame.Rect(40, 180, 100, 40)
+        self.font = pygame.font.SysFont("Arial", 30, bold = True)
+
+    def display_settingsButton(self, screen):
+        pygame.draw.rect(screen, BLACK, self.rect)
+        text = self.font.render(f"Settings", True, WHITE)
+        text_rect = text.get_rect(center = self.rect.center)
+        screen.blit(text, text_rect)
+
+    def is_inside_settingsButton(self, x, y):
+        return self.rect.collidepoint(x, y)
+    
 class QuitButton:
     def __init__(self):
-        self.rect = pygame.Rect(100, 220, 100, 40)
+        self.rect = pygame.Rect(160, 180, 100, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_quitButton(self, screen):
