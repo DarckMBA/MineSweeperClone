@@ -379,10 +379,12 @@ class App:
                     continue
 
                 if action in ("left", "right", "reset"):
+                    self.new_game(self.current_mode)
+                    self.run_game()
                     return
 
                 if action == "back":
-                    self.back_to_menu = True
+                    self.new_main_menu()
                     return
 
                 if action == "quit":
@@ -390,22 +392,26 @@ class App:
                     raise SystemExit
                 
     def get_input_action(self, event):
-        if event.type == (pygame.MOUSEBUTTONDOWN and pygame.MOUSEBUTTONUP) and event.button == 1:
-            return "left"
-        if event.type == (pygame.MOUSEBUTTONDOWN and pygame.MOUSEBUTTONUP) and event.button == 3:
-            return "right"
-        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_a:
-            return "left"
-        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_s:
-            return "right"
-        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_q:
-            return "reset"
-        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_w:
-            return "back"
-        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_e:
-            return "quit"
-        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_r:
-            return "settings"
+        if event.type == (pygame.MOUSEBUTTONDOWN and pygame.MOUSEBUTTONUP):
+            if event.button == 1:
+                return "left"
+            if event.button == 3:
+                return "right"
+
+        if event.type == (pygame.KEYDOWN and pygame.KEYUP):
+            if event.key == pygame.K_a:
+                return "left"
+            if event.key == pygame.K_s:
+                return "right"
+            if event.key == pygame.K_q:
+                return "reset"
+            if event.key == pygame.K_w:
+                return "back"
+            if event.key == pygame.K_e:
+                return "quit"
+            if event.key == pygame.K_r:
+                return "settings"
+            
         return None
 
 
