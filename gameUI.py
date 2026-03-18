@@ -117,10 +117,12 @@ class Board:
 class MineCount:
     def __init__(self, x, y):
         self.rect = pygame.Rect(x, y, 100, 40)
+        self.shade = pygame.Rect(x + 5, y + 5, 100, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_mineCount(self, screen, count):
-        pygame.draw.rect(screen, BLACK, self.rect)
+        pygame.draw.rect(screen, BLACK, self.shade, 0, 10)
+        pygame.draw.rect(screen, LIGHTGREY, self.rect, 0, 10)
         mine_icon_pos = (self.rect.x + 5, self.rect.y + (self.rect.height - TILESIZE) // 2)
         screen.blit(tile_mine, mine_icon_pos)
         text = self.font.render(f"= {count}", True, WHITE)
@@ -129,6 +131,7 @@ class MineCount:
 class Timer:
     def __init__(self, x, y):
         self.rect = pygame.Rect(x, y, 120, 40)
+        self.shade = pygame.Rect(x + 5, y + 5, 120, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
         self.start_ticks = 0
         self.frozen_ms = None
@@ -158,19 +161,22 @@ class Timer:
 
         timer_text = f"{minutes:02}:{seconds:02}:{milliseconds:02}"
 
-        pygame.draw.rect(screen, BLACK, self.rect)
+        pygame.draw.rect(screen, BLACK, self.shade, 0, 10)
+        pygame.draw.rect(screen, LIGHTGREY, self.rect, 0, 10)
         text = self.font.render(timer_text, True, WHITE)
         text_rect = text.get_rect(center = self.rect.center)
         screen.blit(text, text_rect)
 
 class ResetButton:
     def __init__(self, x, y):
-        self.rect = pygame.Rect(x, y, 80, 40)
+        self.rect = pygame.Rect(x, y, 90, 40)
+        self.shade = pygame.Rect(x + 5, y + 5, 90, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_resetButton(self, screen):
-        pygame.draw.rect(screen, BLACK, self.rect)
-        text = self.font.render(f"Reset", True, WHITE)
+        pygame.draw.rect(screen, BLACK, self.shade, 0, 10)
+        pygame.draw.rect(screen, LIGHTGREY, self.rect, 0, 10)
+        text = self.font.render(f"RESET", True, WHITE)
         text_rect = text.get_rect(center = self.rect.center)
         screen.blit(text, text_rect)
 
@@ -179,12 +185,14 @@ class ResetButton:
     
 class BackButton:
     def __init__(self, x, y):
-        self.rect = pygame.Rect(x, y, 70, 40)
+        self.rect = pygame.Rect(x, y, 80, 40)
+        self.shade = pygame.Rect(x + 5, y + 5, 80, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_backButton(self, screen):
-        pygame.draw.rect(screen, BLACK, self.rect)
-        text = self.font.render(f"Back", True, WHITE)
+        pygame.draw.rect(screen, BLACK, self.shade, 0, 10)
+        pygame.draw.rect(screen, LIGHTGREY, self.rect, 0, 10)
+        text = self.font.render(f"BACK", True, WHITE)
         text_rect = text.get_rect(center = self.rect.center)
         screen.blit(text, text_rect)
 
@@ -194,11 +202,13 @@ class BackButton:
 class QuitButton:
     def __init__(self, x, y):
         self.rect = pygame.Rect(x, y, 70, 40)
+        self.shade = pygame.Rect(x + 5, y + 5, 70, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_quitButton(self, screen):
-        pygame.draw.rect(screen, BLACK, self.rect)
-        text = self.font.render(f"Quit", True, WHITE)
+        pygame.draw.rect(screen, BLACK, self.shade, 0, 10)
+        pygame.draw.rect(screen, LIGHTGREY, self.rect, 0, 10)
+        text = self.font.render(f"QUIT", True, WHITE)
         text_rect = text.get_rect(center = self.rect.center)
         screen.blit(text, text_rect)
 

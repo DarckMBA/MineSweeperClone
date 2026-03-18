@@ -11,18 +11,20 @@ class SettingsMenu:
 class ControlsExplanation:
     def __init__(self):
         self.rect = pygame.Rect(50, 50, 300, 300)
+        self.shade = pygame.Rect(55, 55, 300, 300)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_controllsExplanation(self, screen):
-        pygame.draw.rect(screen, BLACK, self.rect)
+        pygame.draw.rect(screen, BLACK, self.shade, 0, 10)
+        pygame.draw.rect(screen, LIGHTGREY, self.rect, 0, 10)
 
         lines = [
-            "Left click = A Key",
-            "Right click = S Key",
-            "Q Key = Reset",
-            "W Key = Back",
-            "E Key = Quit",
-            "R Key = Settings",
+            "LEFT CLICK = A KEY",
+            "RIGHT CLICK = S KEY",
+            "Q KEY = RESET",
+            "W KEY = BACK",
+            "E KEY = QUIT",
+            "R KEY = SETTINGS",
         ]
         line_spacing = 10
         y = self.rect.top + 20
@@ -36,11 +38,13 @@ class ControlsExplanation:
 class BackButton:
     def __init__(self):
         self.rect = pygame.Rect(150, 370, 100, 40)
+        self.shade = pygame.Rect(155, 375, 100, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_backButton(self, screen):
-        pygame.draw.rect(screen, BLACK, self.rect)
-        text = self.font.render(f"Back", True, WHITE)
+        pygame.draw.rect(screen, BLACK, self.shade, 0, 10)
+        pygame.draw.rect(screen, LIGHTGREY, self.rect, 0, 10)
+        text = self.font.render(f"BACK", True, WHITE)
         text_rect = text.get_rect(center = self.rect.center)
         screen.blit(text, text_rect)
 
@@ -50,11 +54,13 @@ class BackButton:
 class QuitButton:
     def __init__(self):
         self.rect = pygame.Rect(150, 430, 100, 40)
+        self.shade = pygame.Rect(155, 435, 100, 40)
         self.font = pygame.font.SysFont("Arial", 30, bold = True)
 
     def display_quitButton(self, screen):
-        pygame.draw.rect(screen, BLACK, self.rect)
-        text = self.font.render(f"Quit", True, WHITE)
+        pygame.draw.rect(screen, BLACK, self.shade, 0, 10)
+        pygame.draw.rect(screen, LIGHTGREY, self.rect, 0, 10)
+        text = self.font.render(f"QUIT", True, WHITE)
         text_rect = text.get_rect(center = self.rect.center)
         screen.blit(text, text_rect)
 

@@ -17,11 +17,11 @@ class App:
                 "cols": 9,
                 "mines": 10,
                 "ui": {
-                    "minecount": (20, 0),
-                    "timer": (150, 0),
-                    "reset": (25, 40),
-                    "back": (115, 40),
-                    "quit": (195, 40),
+                    "minecount": (20, 5),
+                    "timer": (150, 5),
+                    "reset": (15, 50),
+                    "back": (115, 50),
+                    "quit": (205, 50),
                 },
             },
             "medium": {
@@ -29,11 +29,11 @@ class App:
                 "cols": 16,
                 "mines": 40,
                 "ui": {
-                    "minecount": (15, 20),
-                    "timer": (125, 20),
-                    "reset": (255, 20),
-                    "back": (345, 20),
-                    "quit": (425, 20),
+                    "minecount": (5, 30),
+                    "timer": (115, 30),
+                    "reset": (245, 30),
+                    "back": (345, 30),
+                    "quit": (435, 30),
                 },
             },
             "hard": {
@@ -41,11 +41,11 @@ class App:
                 "cols": 30,
                 "mines": 99,
                 "ui": {
-                    "minecount": (40, 20),
-                    "timer": (180, 20),
-                    "reset": (340, 20),
-                    "back": (460, 20),
-                    "quit": (570, 20),
+                    "minecount": (40, 30),
+                    "timer": (180, 30),
+                    "reset": (340, 30),
+                    "back": (470, 30),
+                    "quit": (590, 30),
                 },
             },
         }
@@ -360,21 +360,21 @@ class App:
                     raise SystemExit
                 
     def get_input_action(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        if event.type == (pygame.MOUSEBUTTONDOWN and pygame.MOUSEBUTTONUP) and event.button == 1:
             return "left"
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+        if event.type == (pygame.MOUSEBUTTONDOWN and pygame.MOUSEBUTTONUP) and event.button == 3:
             return "right"
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
+        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_a:
             return "left"
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_s:
             return "right"
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_q:
             return "reset"
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_w:
+        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_w:
             return "back"
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_e:
             return "quit"
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+        if event.type == (pygame.KEYDOWN and pygame.KEYUP) and event.key == pygame.K_r:
             return "settings"
         return None
 
