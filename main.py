@@ -10,6 +10,9 @@ class App:
     def __init__(self):
         pygame.init()
         self.clock = pygame.time.Clock()
+        self.pending_view = None
+        self.start_game_at = 0
+        self.start_delay_ms = 200
 
         self.modes = {
             "easy": {
@@ -73,6 +76,17 @@ class App:
             self.clock.tick(FPS)
             self.main_menu_events()
             self.draw_main_menu()
+
+            now = pygame.time.get_ticks()
+            if self.pending_view is not None and now >= self.start_game_at and self.pending_view == "settings":
+                self.new_settings_menu()
+                self.pending_view = None
+                self.run_settings_menu()
+            if self.pending_view is not None and now >= self.start_game_at:
+                self.new_game(self.pending_view)
+                self.pending_view = None
+                self.run_game()
+                return
         else:
             self.close_app()
 
@@ -109,23 +123,24 @@ class App:
             mx, my = pygame.mouse.get_pos()
 
             if action in ("left", "right") and self.easyButton.is_inside_easyButton(mx, my):
-                self.new_game("easy")
-                self.run_game()
+                self.pending_view = "easy"
+                self.start_game_at = pygame.time.get_ticks() + self.start_delay_ms
                 return
 
             if action in ("left", "right") and self.mediumButton.is_inside_mediumButton(mx, my):
-                self.new_game("medium")
-                self.run_game()
+                self.pending_view = "medium"
+                self.start_game_at = pygame.time.get_ticks() + self.start_delay_ms
                 return
 
             if action in ("left", "right") and self.hardButton.is_inside_hardButton(mx, my):
-                self.new_game("hard")
-                self.run_game()
+                self.pending_view = "hard"
+                self.start_game_at = pygame.time.get_ticks() + self.start_delay_ms
                 return
             
             if action in ("left", "right") and self.settingsButton.is_inside_settingsButton(mx, my):
-                self.new_settings_menu()
-                self.run_settings_menu()
+                self.pending_view = "settings"
+                self.start_game_at = pygame.time.get_ticks() + self.start_delay_ms
+                return
 
             if action in ("left", "right") and self.quitButton.is_inside_quitButton(mx, my):
                 pygame.quit()
@@ -152,19 +167,28 @@ class App:
         self.quitButton = QuitButton(*ui["quit"])
 
     def run_game(self):
-        while True:
-            self.playing = True
-            self.back_to_menu = False
-            while self.playing:
-                self.clock.tick(FPS)
-                self.game_events()
-                self.draw_game()
-            if self.back_to_menu:
-                self.new_main_menu()
-                break
+        self.playing = True
+        self.back_to_menu = False
+        while self.playing:
+            self.clock.tick(FPS)
+            self.game_events()
 
-            self.close_app()
-            self.new_game(self.current_mode)
+            now = pygame.time.get_ticks()
+            if self.pending_view == "back" and now >= self.start_game_at:
+                self.pending_view = None
+                self.back_to_menu = True
+                self.isInSettingsMenu = False
+                self.new_main_menu()
+                return
+            
+            self.draw_game()
+
+        if self.back_to_menu:
+            self.new_main_menu()
+            return
+
+        self.close_app()
+        self.new_game(self.current_mode)
 
     def draw_game(self):
         self.screen.fill(BGCOLOUR)
@@ -199,8 +223,8 @@ class App:
                 return
 
             if action == "back":
-                self.back_to_menu = True
-                self.playing = False
+                self.pending_view = "back"
+                self.start_game_at = pygame.time.get_ticks() + self.start_delay_ms
                 return
 
             if action == "quit":
@@ -214,8 +238,8 @@ class App:
                 return
 
             if action in ("left", "right") and self.backButton.is_inside_backButton(mx, my):
-                self.back_to_menu = True
-                self.playing = False
+                self.pending_view = "back"
+                self.start_game_at = pygame.time.get_ticks() + self.start_delay_ms
                 return
 
             if action in ("left", "right") and self.quitButton.is_inside_quitButton(mx, my):
@@ -282,19 +306,25 @@ class App:
         self.quitButton = settingsMenuView.QuitButton()
     
     def run_settings_menu(self):
-        while True:
-            self.isInSettingsMenu = True
-            self.back_to_menu = False
-            while self.isInSettingsMenu:
-                self.clock.tick(FPS)
-                self.settings_menu_events()
-                self.draw_settings_menu()
+        self.isInSettingsMenu = True
+        self.back_to_menu = False
+        while self.isInSettingsMenu:
+            self.clock.tick(FPS)
+            self.settings_menu_events()
+
+            now = pygame.time.get_ticks()
+            if self.pending_view == "back" and now >= self.start_game_at:
+                self.pending_view = None
+                self.back_to_menu = True
+                self.isInSettingsMenu = False
+                self.new_main_menu()
+                return
+
+            self.draw_settings_menu()
+
             if self.back_to_menu:
                 self.new_main_menu()
-                break
-
-            self.close_app()
-            self.new_settings_menu()
+                return
 
     def draw_settings_menu(self):
         self.screen.fill(BGCOLOUR)
@@ -317,8 +347,8 @@ class App:
                 continue
 
             if action == "back":
-                self.back_to_menu = True
-                self.isInSettingsMenu = False
+                self.pending_view = "back"
+                self.start_game_at = pygame.time.get_ticks() + self.start_delay_ms
                 return
 
             if action == "quit":
@@ -328,10 +358,10 @@ class App:
             mx, my = pygame.mouse.get_pos()
 
             if action in ("left", "right") and self.backButton.is_inside_backButton(mx, my):
-                self.back_to_menu = True
-                self.isInSettingsMenu = False
+                self.pending_view = "back"
+                self.start_game_at = pygame.time.get_ticks() + self.start_delay_ms
                 return
-
+            
             if action in ("left", "right") and self.quitButton.is_inside_quitButton(mx, my):
                 pygame.quit()
                 raise SystemExit
